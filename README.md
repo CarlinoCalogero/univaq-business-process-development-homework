@@ -9,3 +9,6 @@ The goal of this homework is to design a business process. The project covers th
 * `/src`: Implementation code for Service Tasks and Workers.
 * `/docs`: Project documentation and process descriptions.
 * `/resources`: Assets and configuration files.
+
+## Author
+* [CarlinoCalogero](https://github.com/CarlinoCalogero)
