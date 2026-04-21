@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03" xmlns:aaasyncprocess.bpd.disim.univaq.it="http://aaasyncprocess.bpd.disim.univaq.it/" xmlns:aaserviceasync.localhost="http://aaserviceasync.localhost/" xmlns:businesstravel.bpd.disim.univaq.it="http://businesstravel.bpd.disim.univaq.it/" xmlns:clientasyncprocess.bpd.disim.univaq.it="http://clientasyncprocess.bpd.disim.univaq.it/" xmlns:daasyncprocess.bpd.disim.univaq.it="http://daasyncprocess.bpd.disim.univaq.it/" xmlns:daserviceasync.localhost="http://daserviceasync.localhost/" xmlns:etsservice.bpd.disim.univaq.it="http://etsservice.bpd.disim.univaq.it/">
+  <process name="businesstravel.bpd.disim.univaq.it:BusinessTravelProcess.bpel">
+    <active>true</active>
+    <retired>false</retired>
+    <process-events generate="all"/>
+    <provide partnerLink="bpelProcessPartner">
+      <service name="businesstravel.bpd.disim.univaq.it:BusinessTravelService" port="BusinessTravelPort"/>
+    </provide>
+    <provide partnerLink="aaPartner">
+      <service name="businesstravel.bpd.disim.univaq.it:BusinessTravelService" port="BusinessTravelPort"/>
+    </provide>
+    <provide partnerLink="daPartner">
+      <service name="businesstravel.bpd.disim.univaq.it:BusinessTravelService" port="BusinessTravelPort"/>
+    </provide>
+    <invoke partnerLink="etsPartner">
+      <service name="etsservice.bpd.disim.univaq.it:ETSServiceImplService" port="ETSServiceImplPort"/>
+    </invoke>
+    <invoke partnerLink="aaPartner">
+      <service name="aaserviceasync.localhost:AAServiceAsync" port="AAServiceAsyncPort"/>
+    </invoke>
+    <invoke partnerLink="daPartner">
+      <service name="daserviceasync.localhost:DAServiceAsync" port="DAServiceAsyncPort"/>
+    </invoke>
+    <invoke partnerLink="bpelProcessPartner">
+      <service name="clientasyncprocess.bpd.disim.univaq.it:ClientAsyncProcess" port="ClientAsyncPort"/>
+    </invoke>
+  </process>
+</deploy>

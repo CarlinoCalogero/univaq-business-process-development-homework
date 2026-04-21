@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpel:process exitOnStandardFault="yes" name="AAServiceAsync.bpel"
+	targetNamespace="http://aaserviceasync.localhost/"
+	xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+	xmlns:ns="http://aaserviceasync.localhost/Artifacts"
+	xmlns:ns0="http://aaserviceasync.localhost/" 
+	xmlns:ai="http://aaservice.bpd.disim.univaq.it/"
+	xmlns:bt="http://businesstravel.bpd.disim.univaq.it/" 
+	xmlns:tns="http://aaserviceasync.localhost/">
+
+	<bpel:import importType="http://schemas.xmlsoap.org/wsdl/"
+		location="aaserviceasync.wsdl" namespace="http://aaserviceasync.localhost/" />
+	<bpel:import importType="http://schemas.xmlsoap.org/wsdl/"
+		location="AAServiceAsyncArtifacts.wsdl" namespace="http://aaserviceasync.localhost/Artifacts" />
+	<bpel:import importType="http://schemas.xmlsoap.org/wsdl/"
+		location="aainterface.wsdl" namespace="http://aaservice.bpd.disim.univaq.it/" />
+	<bpel:import importType="http://schemas.xmlsoap.org/wsdl/"
+		location="businesstravel.wsdl" namespace="http://businesstravel.bpd.disim.univaq.it/" />
+
+	<bpel:partnerLinks>
+		<bpel:partnerLink myRole="AAServiceAsyncRole" name="clientAsyncPartner"
+			partnerLinkType="ns:AAServiceAsyncPLT" partnerRole="BusinessTravelRole" />
+
+		<bpel:partnerLink name="aaServicePartner"
+			partnerLinkType="ns:AAServicePLT" partnerRole="AAServiceRole" />
+	</bpel:partnerLinks>
+
+	<bpel:variables>
+		<bpel:variable messageType="tns:flightTicket" name="flightTicketRequest" />
+		<bpel:variable messageType="ai:flightTicket" name="aiflightTicketRequest" />
+		<bpel:variable messageType="ai:flightTicketResponse" name="aiflightTicketResponse" />
+		<bpel:variable messageType="bt:FlightTicketCallback" name="FlightTicketCallbackRequest" />
+	</bpel:variables>
+
+	<bpel:sequence name="MainSequence">
+		<bpel:receive createInstance="yes" name="ReceiveFlightTicket"
+			partnerLink="clientAsyncPartner" operation="flightTicket" portType="ns0:AAServiceAsync"
+			variable="flightTicketRequest" />
+
+		<bpel:assign>
+			
+
+			
+            <bpel:copy>
+                <bpel:from><bpel:literal><tns:flightTicket xmlns:tns="http://aaservice.bpd.disim.univaq.it/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <arg0>
+    <desiredDepartureDate>2001-12-31T12:00:00</desiredDepartureDate>
+    <desiredReturnDate>2001-12-31T12:00:00</desiredReturnDate>
+    <destinationTo>destinationTo</destinationTo>
+    <originFrom>originFrom</originFrom>
+  </arg0>
+  <arg1>
+    <travelclasstype>ECONOMY</travelclasstype>
+  </arg1>
+</tns:flightTicket>
+</bpel:literal></bpel:from>
+                <bpel:to variable="aiflightTicketRequest" part="parameters"></bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+                <bpel:from part="parameters" variable="flightTicketRequest"></bpel:from>
+                <bpel:to part="parameters" variable="aiflightTicketRequest"></bpel:to>
+            </bpel:copy>
+        </bpel:assign>
+
+		<bpel:invoke partnerLink="aaServicePartner" operation="flightTicket"
+			portType="ai:AAInterface" inputVariable="aiflightTicketRequest"
+			outputVariable="aiflightTicketResponse" />
+
+		<bpel:assign>
+			
+
+			
+            
+            
+            <bpel:copy>
+                <bpel:from><bpel:literal><tns:FlightTicketCallback xmlns:tns="http://businesstravel.bpd.disim.univaq.it/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <return>
+    <approved>true</approved>
+    <departureDate>2001-12-31T12:00:00</departureDate>
+    <flightNo>flightNo</flightNo>
+    <price>0.0</price>
+    <returnDate>2001-12-31T12:00:00</returnDate>
+    <travelClass>
+      <travelclasstype>ECONOMY</travelclasstype>
+    </travelClass>
+  </return>
+</tns:FlightTicketCallback>
+</bpel:literal></bpel:from>
+                <bpel:to variable="FlightTicketCallbackRequest" part="parameters"></bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+                <bpel:from part="parameters" variable="aiflightTicketResponse"></bpel:from>
+                <bpel:to part="parameters" variable="FlightTicketCallbackRequest"></bpel:to>
+            </bpel:copy>
+        </bpel:assign>
+
+		<bpel:invoke partnerLink="clientAsyncPartner" operation="FlightTicketCallback"
+			portType="bt:BusinessTravel" inputVariable="FlightTicketCallbackRequest"/>
+	</bpel:sequence>
+</bpel:process>

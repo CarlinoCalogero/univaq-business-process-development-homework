@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions 
+  targetNamespace="http://clientasyncprocess.bpd.disim.univaq.it/Artifacts"
+  xmlns:tns="http://clientasyncprocess.bpd.disim.univaq.it/"
+  xmlns:btp="http://businesstravel.bpd.disim.univaq.it/"
+  xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+	<import location="clientasyncprocess.wsdl"
+		namespace="http://clientasyncprocess.bpd.disim.univaq.it/" />
+	<import location="businesstravel.wsdl" namespace="http://businesstravel.bpd.disim.univaq.it/" />
+
+	<partnerLinkType name="ClientRequestPLT"
+		xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+		<role name="ClientRequestRole" portType="tns:ClientRequest" />
+	</partnerLinkType>
+
+	<partnerLinkType name="MainProcessPLT"
+		xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+		<role name="MainProcessCallbackRole" portType="tns:ClientRequest" />
+		<role name="MainProcessRequestRole" portType="btp:BusinessTravel" />
+	</partnerLinkType>
+</definitions>

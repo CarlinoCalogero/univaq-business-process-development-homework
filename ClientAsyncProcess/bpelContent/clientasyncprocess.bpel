@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpel:process exitOnStandardFault="yes" name="clientasyncprocess.bpel"
+	targetNamespace="http://clientasyncprocess.bpd.disim.univaq.it/"
+	xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+	xmlns:tns="http://clientasyncprocess.bpd.disim.univaq.it/" xmlns:ns="http://clientasyncprocess.bpd.disim.univaq.it/Artifacts"
+	xmlns:btp="http://businesstravel.bpd.disim.univaq.it/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<bpel:import importType="http://schemas.xmlsoap.org/wsdl/"
+		location="clientasyncprocess.wsdl" namespace="http://clientasyncprocess.bpd.disim.univaq.it/" />
+	<bpel:import importType="http://schemas.xmlsoap.org/wsdl/"
+		location="clientasyncprocessArtifacts.wsdl" namespace="http://clientasyncprocess.bpd.disim.univaq.it/Artifacts" />
+
+	<bpel:partnerLinks>
+		<bpel:partnerLink name="clientRequest"
+			partnerLinkType="ns:ClientRequestPLT" myRole="ClientRequestRole" />
+		<bpel:partnerLink myRole="MainProcessCallbackRole"
+			partnerRole="MainProcessRequestRole" name="mainProcessRequest"
+			partnerLinkType="ns:MainProcessPLT" />
+	</bpel:partnerLinks>
+
+	<bpel:variables>
+		<bpel:variable messageType="tns:TravelApproval" name="travelApprovalRequest" />
+		<bpel:variable messageType="tns:TravelApprovalResponse"
+			name="travelResponse" />
+		<bpel:variable messageType="btp:TravelApprovalCallback"
+			name="travelApprovalCallback" />
+		<bpel:variable messageType="btp:TravelApproval" name="mainProcessRequest" />
+	</bpel:variables>
+
+	<bpel:sequence name="MainSequence">
+		<bpel:receive createInstance="yes" partnerLink="clientRequest" operation="TravelApproval" portType="tns:ClientRequest"
+			variable="travelApprovalRequest" />
+
+		<bpel:assign validate="no">
+			<bpel:copy>
+				<bpel:from part="parameters" variable="travelApprovalRequest">
+				</bpel:from>
+				<bpel:to part="parameters" variable="mainProcessRequest">
+				</bpel:to>
+			</bpel:copy>
+		</bpel:assign>
+
+		<bpel:invoke partnerLink="mainProcessRequest"
+			operation="TravelApproval" portType="btp:BusinessTravel"
+			inputVariable="mainProcessRequest" />
+
+		<bpel:receive partnerLink="mainProcessRequest"
+			operation="BusinessTravelCallbackOp" portType="tns:ClientRequest"
+			variable="travelResponse" />
+
+
+		<bpel:reply name="replyClient" operation="TravelApproval"
+			partnerLink="clientRequest" portType="tns:ClientRequest" variable="travelResponse" />
+
+	</bpel:sequence>
+</bpel:process>

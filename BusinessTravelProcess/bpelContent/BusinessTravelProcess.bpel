@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpel:process exitOnStandardFault="yes"
+    name="BusinessTravelProcess.bpel"
+    targetNamespace="http://businesstravel.bpd.disim.univaq.it/"
+    xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns="http://businesstravel.bpd.disim.univaq.it/Artifacts"
+    xmlns:ns0="http://businesstravel.bpd.disim.univaq.it/"
+    xmlns:ets="http://etsservice.bpd.disim.univaq.it/"
+    xmlns:aa="http://aaserviceasync.localhost/"
+    xmlns:da="http://daserviceasync.localhost/"
+    xmlns:cap="http://clientasyncprocess.bpd.disim.univaq.it/">
+    
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/"
+        location="businesstravel.wsdl" namespace="http://businesstravel.bpd.disim.univaq.it/"/>
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/"
+        location="BusinessTravelProcessArtifacts.wsdl" namespace="http://businesstravel.bpd.disim.univaq.it/Artifacts"/>
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/"
+        location="etsinterface.wsdl" namespace="http://etsservice.bpd.disim.univaq.it/"/>
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/"
+        location="aaserviceasync.wsdl" namespace="http://aaserviceasync.localhost/"/>
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/"
+        location="daserviceasync.wsdl" namespace="http://daserviceasync.localhost/"/>
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/"
+        location="clientasyncprocess.wsdl" namespace="http://clientasyncprocess.bpd.disim.univaq.it/"/>
+    
+    <bpel:partnerLinks>
+        <bpel:partnerLink myRole="BusinessTravelRole" partnerRole="capRole"
+            name="bpelProcessPartner" partnerLinkType="ns:BusinessTravelPLT"/>
+        <bpel:partnerLink partnerRole="etsRole"
+            name="etsPartner" partnerLinkType="ns:etsPLT"/>
+        <bpel:partnerLink partnerRole="aaRequest" myRole="aaCallback"
+            name="aaPartner" partnerLinkType="ns:aaPLT"/>
+        <bpel:partnerLink partnerRole="daRequest" myRole="daCallback"
+            name="daPartner" partnerLinkType="ns:daPLT"/>
+    </bpel:partnerLinks>
+    
+    <bpel:variables>
+        <bpel:variable messageType="ns0:TravelApproval" name="travelApprovalRequest"/>
+        <bpel:variable messageType="ns0:TravelApprovalCallback" name="travelApprovalResponse"/>
+        <bpel:variable messageType="ets:employTravelStatus" name="etsRequest"/>
+        <bpel:variable messageType="ets:employTravelStatusResponse" name="etsResponse"/>
+
+        <bpel:variable messageType="aa:flightTicket" name="aaRequest"/>
+        <bpel:variable messageType="ns0:FlightTicketCallback" name="aaCallback"/>
+
+        <bpel:variable messageType="da:flightTicket" name="daRequest"/>
+        <bpel:variable messageType="ns0:FlightTicketCallback" name="daCallback"/>
+
+        <bpel:variable messageType="cap:TravelApprovalResponse" name="clientFinalResponse"/>
+    </bpel:variables>
+    
+    <bpel:sequence>
+        <bpel:receive createInstance="yes" name="TravelApprovalRequest"
+          partnerLink="bpelProcessPartner" operation="TravelApproval"
+          portType="ns0:BusinessTravel" variable="travelApprovalRequest"/>
+          
+        <bpel:assign validate="no" name="InitializeETSRequest">
+            <bpel:copy>
+                <bpel:from>
+                  <bpel:literal>
+                    <tns:employTravelStatus xmlns:tns="http://etsservice.bpd.disim.univaq.it/"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+						  <arg0>
+						    <department>department</department>
+						    <firstName>firstName</firstName>
+						    <lastName>lastName</lastName>
+						  </arg0>
+					</tns:employTravelStatus>
+				  </bpel:literal>
+				</bpel:from>
+                <bpel:to variable="etsRequest" part="parameters"/>
+            </bpel:copy>
+            
+            <bpel:copy>
+                <bpel:from part="parameters" variable="travelApprovalRequest">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[employee]]></bpel:query>
+                </bpel:from>
+                <bpel:to part="parameters" variable="etsRequest">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[arg0]]></bpel:query>
+                </bpel:to>
+            </bpel:copy>
+        </bpel:assign>
+        
+        <bpel:invoke name="invokeETSRequest" partnerLink="etsPartner"
+          operation="employTravelStatus" portType="ets:ETSInterface"
+          inputVariable="etsRequest" outputVariable="etsResponse"/>
+          
+        
+        <bpel:assign validate="no" name="InitializeACRequests">
+            <bpel:copy>
+                <bpel:from>
+                  <bpel:literal>
+                    <tns:flightTicket xmlns:tns="http://daservice.bpd.disim.univaq.it/"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+						  <arg0>
+						    <desiredDepartureDate>2001-12-31T12:00:00</desiredDepartureDate>
+						    <desiredReturnDate>2001-12-31T12:00:00</desiredReturnDate>
+						    <destinationTo>destinationTo</destinationTo>
+						    <originFrom>originFrom</originFrom>
+						  </arg0>
+						  <arg1>
+						    <travelclasstype>ECONOMY</travelclasstype>
+						  </arg1>
+					</tns:flightTicket>
+				  </bpel:literal>
+				</bpel:from>
+                <bpel:to variable="daRequest" part="parameters"/>
+            </bpel:copy>
+            <bpel:copy>
+                <bpel:from>
+                  <bpel:literal>
+                    <tns:flightTicket xmlns:tns="http://aaservice.bpd.disim.univaq.it/"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+						  <arg0>
+						    <desiredDepartureDate>2001-12-31T12:00:00</desiredDepartureDate>
+						    <desiredReturnDate>2001-12-31T12:00:00</desiredReturnDate>
+						    <destinationTo>destinationTo</destinationTo>
+						    <originFrom>originFrom</originFrom>
+						  </arg0>
+						  <arg1>
+						    <travelclasstype>ECONOMY</travelclasstype>
+						  </arg1>
+					</tns:flightTicket>
+				  </bpel:literal>
+				</bpel:from>
+                <bpel:to variable="aaRequest" part="parameters"/>
+            </bpel:copy>
+            <bpel:copy>
+                <bpel:from part="parameters" variable="etsResponse">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[return]]></bpel:query>
+                </bpel:from>
+                <bpel:to part="parameters" variable="aaRequest">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[arg1]]></bpel:query>
+                </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+                <bpel:from part="parameters" variable="travelApprovalRequest">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[flightData]]></bpel:query>
+                </bpel:from>
+                <bpel:to part="parameters" variable="aaRequest">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[arg0]]></bpel:query>
+                </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+                <bpel:from part="parameters" variable="etsResponse">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[return]]></bpel:query>
+                </bpel:from>
+                <bpel:to part="parameters" variable="daRequest">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[arg1]]></bpel:query>
+                </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+                <bpel:from part="parameters" variable="travelApprovalRequest">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[flightData]]></bpel:query>
+                </bpel:from>
+                <bpel:to part="parameters" variable="daRequest">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[arg0]]></bpel:query>
+                </bpel:to>
+            </bpel:copy>
+        </bpel:assign>
+        
+        <bpel:flow>
+
+			  
+
+
+        <bpel:sequence name="AASequence">
+                <bpel:invoke name="InvokeAARequest" partnerLink="aaPartner" operation="flightTicket" portType="aa:AAServiceAsync" inputVariable="aaRequest" />
+                <bpel:receive name="AAReceiveCallback" partnerLink="aaPartner" operation="FlightTicketCallback" portType="ns0:BusinessTravel" variable="aaCallback" />
+            </bpel:sequence><bpel:sequence name="DaSequence">
+                <bpel:invoke name="InvokeDARequest" partnerLink="daPartner" operation="flightTicket" portType="da:DAServiceAsync" inputVariable="daRequest" />
+                <bpel:receive name="DAReceiveCallback" partnerLink="daPartner" operation="FlightTicketCallback" portType="ns0:BusinessTravel" variable="daCallback" />
+            </bpel:sequence></bpel:flow>
+        
+        <bpel:assign validate="no" name="InitializeTravelApprovalResponse">
+            <bpel:copy>
+                <bpel:from>
+                  <bpel:literal>
+                    <tns:TravelApprovalResponse xmlns:tns="http://businesstravel.bpd.disim.univaq.it/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+					  <return>
+					    <approved>true</approved>
+					    <departureDate>2001-12-31T12:00:00</departureDate>
+					    <flightNo>flightNo</flightNo>
+					    <price>0.0</price>
+					    <returnDate>2001-12-31T12:00:00</returnDate>
+					    <travelClass>
+					      <travelclasstype>ECONOMY</travelclasstype>
+					    </travelClass>
+					  </return>
+				   </tns:TravelApprovalResponse>
+	  			</bpel:literal>
+			  </bpel:from>
+              <bpel:to variable="travelApprovalResponse" part="parameters"/>
+            </bpel:copy>
+        </bpel:assign>
+        
+        <bpel:if name="CompareTicketsPrice">
+            <bpel:condition expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[$aaCallback.parameters/return/price <= $daCallback.parameters/return/price]]></bpel:condition>
+            
+            <bpel:assign validate="no" name="setReplyFromAA">
+                <bpel:copy>
+                    <bpel:from part="parameters" variable="aaCallback">
+                        <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[return]]></bpel:query>
+                    </bpel:from>
+                    <bpel:to part="parameters" variable="travelApprovalResponse">
+                        <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[return]]></bpel:query>
+                    </bpel:to>
+                </bpel:copy>
+            </bpel:assign>
+            
+            <bpel:else>
+            		<bpel:assign validate="no" name="setReplyFromDA">
+	            		<bpel:copy>
+	                    <bpel:from part="parameters" variable="daCallback">
+	                        <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[return]]></bpel:query>
+	                    </bpel:from>
+	                    <bpel:to part="parameters" variable="travelApprovalResponse">
+	                        <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[return]]></bpel:query>
+	                    </bpel:to>
+	                </bpel:copy>
+            		</bpel:assign>
+            </bpel:else>
+        </bpel:if>
+
+        <bpel:assign validate="no" name="clientCallbackMapping">
+            <bpel:copy>
+                <bpel:from part="parameters" variable="travelApprovalResponse">
+                </bpel:from>
+                <bpel:to part="parameters" variable="clientFinalResponse">
+                </bpel:to>
+        </bpel:copy>
+        </bpel:assign>
+
+        <bpel:invoke name="invokeClientCallback" partnerLink="bpelProcessPartner"
+          operation="BusinessTravelCallbackOp" portType="cap:ClientRequest"
+          inputVariable="clientFinalResponse"/>
+
+    </bpel:sequence>
+</bpel:process>

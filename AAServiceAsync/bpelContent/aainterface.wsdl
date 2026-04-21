@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://aaservice.bpd.disim.univaq.it/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="AAServiceImplService" targetNamespace="http://aaservice.bpd.disim.univaq.it/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://aaservice.bpd.disim.univaq.it/" elementFormDefault="unqualified" targetNamespace="http://aaservice.bpd.disim.univaq.it/" version="1.0">
+
+  <xs:element name="flightTicket" type="tns:flightTicket"/>
+
+  <xs:element name="flightTicketResponse" type="tns:flightTicketResponse"/>
+
+  <xs:complexType name="flightTicket">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:flightData"/>
+      <xs:element minOccurs="0" name="arg1" type="tns:travelClass"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="flightData">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="desiredDepartureDate" type="xs:dateTime"/>
+      <xs:element minOccurs="0" name="desiredReturnDate" type="xs:dateTime"/>
+      <xs:element minOccurs="0" name="destinationTo" type="xs:string"/>
+      <xs:element minOccurs="0" name="originFrom" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="travelClass">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="travelclasstype" type="tns:travelClassType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="flightTicketResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:flightConfirmation"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="flightConfirmation">
+    <xs:sequence>
+      <xs:element name="approved" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="departureDate" type="xs:dateTime"/>
+      <xs:element minOccurs="0" name="flightNo" type="xs:string"/>
+      <xs:element name="price" type="xs:float"/>
+      <xs:element minOccurs="0" name="returnDate" type="xs:dateTime"/>
+      <xs:element minOccurs="0" name="travelClass" type="tns:travelClass"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="travelClassType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ECONOMY"/>
+      <xs:enumeration value="BUSINESS"/>
+      <xs:enumeration value="FIRST"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="flightTicketResponse">
+    <wsdl:part element="tns:flightTicketResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="flightTicket">
+    <wsdl:part element="tns:flightTicket" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="AAInterface">
+    <wsdl:operation name="flightTicket">
+      <wsdl:input message="tns:flightTicket" name="flightTicket">
+    </wsdl:input>
+      <wsdl:output message="tns:flightTicketResponse" name="flightTicketResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="AAServiceImplServiceSoapBinding" type="tns:AAInterface">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="flightTicket">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="flightTicket">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="flightTicketResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="AAServiceImplService">
+    <wsdl:port binding="tns:AAServiceImplServiceSoapBinding" name="AAServiceImplPort">
+      <soap:address location="http://localhost:6060/AAService/aainterface"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

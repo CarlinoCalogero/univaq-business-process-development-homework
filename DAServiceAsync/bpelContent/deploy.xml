@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03" xmlns:businesstravel.bpd.disim.univaq.it="http://businesstravel.bpd.disim.univaq.it/" xmlns:daservice.bpd.disim.univaq.it="http://daservice.bpd.disim.univaq.it/" xmlns:daserviceasync.localhost="http://daserviceasync.localhost/">
+  <process name="daserviceasync.localhost:DAServiceAsync.bpel">
+    <active>true</active>
+    <retired>false</retired>
+    <process-events generate="all"/>
+    <provide partnerLink="clientAsyncPartner">
+      <service name="daserviceasync.localhost:DAServiceAsync" port="DAServiceAsyncPort"/>
+    </provide>
+    <invoke partnerLink="clientAsyncPartner">
+      <service name="businesstravel.bpd.disim.univaq.it:BusinessTravelService" port="BusinessTravelPort"/>
+    </invoke>
+    <invoke partnerLink="daServicePartner">
+      <service name="daservice.bpd.disim.univaq.it:DAServiceImplService" port="DAServiceImplPort"/>
+    </invoke>
+  </process>
+</deploy>

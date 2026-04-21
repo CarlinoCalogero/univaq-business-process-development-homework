@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03"
+	xmlns:aaserviceasync.localhost="http://aaserviceasync.localhost/"
+	xmlns:aaservice.bpd.disim.univaq.it="http://aaservice.bpd.disim.univaq.it/"
+	xmlns:businesstravel.bpd.disim.univaq.it="http://businesstravel.bpd.disim.univaq.it/">
+	<process name="aaserviceasync.localhost:AAServiceAsync.bpel">
+		<active>true</active>
+		<retired>false</retired>
+		<process-events generate="all" />
+		<provide partnerLink="clientAsyncPartner">
+			<service name="aaserviceasync.localhost:AAServiceAsync"
+				port="AAServiceAsyncPort" />
+		</provide>
+		<invoke partnerLink="clientAsyncPartner">
+			<service name="businesstravel.bpd.disim.univaq.it:BusinessTravelService"
+				port="BusinessTravelPort" />
+		</invoke>
+		<invoke partnerLink="aaServicePartner">
+			<service name="aaservice.bpd.disim.univaq.it:AAServiceImplService"
+				port="AAServiceImplPort" />
+		</invoke>
+	</process>
+</deploy>

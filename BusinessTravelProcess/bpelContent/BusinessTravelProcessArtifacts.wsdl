@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions xmlns:tns="http://businesstravel.bpd.disim.univaq.it/"
+  targetNamespace="http://businesstravel.bpd.disim.univaq.it/Artifacts"
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:ets="http://etsservice.bpd.disim.univaq.it/"
+  xmlns:aa="http://aaserviceasync.localhost/"
+  xmlns:da="http://daserviceasync.localhost/"
+  xmlns:cap="http://clientasyncprocess.bpd.disim.univaq.it/">
+  
+  <partnerLinkType name="BusinessTravelPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="BusinessTravelRole" portType="tns:BusinessTravel"/>
+     <role name="capRole" portType="cap:ClientRequest"/>
+  </partnerLinkType>
+  
+  <partnerLinkType name="etsPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="etsRole" portType="ets:ETSInterface"/>
+  </partnerLinkType>
+  
+  <partnerLinkType name="aaPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="aaRequest" portType="aa:AAServiceAsync"/>
+    <role name="aaCallback" portType="tns:BusinessTravel"/>
+  </partnerLinkType>
+  
+  <partnerLinkType name="daPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="daRequest" portType="da:DAServiceAsync"/>
+    <role name="daCallback" portType="tns:BusinessTravel"/>
+  </partnerLinkType>
+  
+  <import location="businesstravel.wsdl" namespace="http://businesstravel.bpd.disim.univaq.it/"/>
+  <import location="etsinterface.wsdl" namespace="http://etsservice.bpd.disim.univaq.it/"/>
+  <import location="aaserviceasync.wsdl" namespace="http://aaserviceasync.localhost/"/>
+  <import location="daserviceasync.wsdl" namespace="http://daserviceasync.localhost/"/>
+  <import location="clientasyncprocess.wsdl" namespace="http://clientasyncprocess.bpd.disim.univaq.it/"/>
+</definitions>

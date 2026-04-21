@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions xmlns:tns="http://daserviceasync.localhost/" 
+	targetNamespace="http://daserviceasync.localhost/Artifacts"	
+	xmlns="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:di="http://daservice.bpd.disim.univaq.it/"
+	xmlns:bt="http://businesstravel.bpd.disim.univaq.it/" >
+
+	<partnerLinkType name="DAServiceAsyncPLT"
+		xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+		<role name="DAServiceAsyncRole" portType="tns:DAServiceAsync" />
+		<role name="BusinessTravelRole" portType="bt:BusinessTravel" />
+	</partnerLinkType>
+
+	<partnerLinkType name="DAServicePLT"
+		xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+		<role name="DAServiceRole" portType="di:DAInterface" />
+	</partnerLinkType>
+
+	<import location="daserviceasync.wsdl" namespace="http://daserviceasync.localhost/" />
+	<import location="businesstravel.wsdl" namespace="http://businesstravel.bpd.disim.univaq.it/" />
+	<import location="dainterface.wsdl" namespace="http://daservice.bpd.disim.univaq.it/" />
+</definitions>

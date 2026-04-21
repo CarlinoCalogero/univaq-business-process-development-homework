@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://daserviceasync.localhost/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http"
+	name="DAServiceAsync" targetNamespace="http://daserviceasync.localhost/">
+	<wsdl:types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			xmlns:tns="http://daserviceasync.localhost/" elementFormDefault="unqualified"
+			targetNamespace="http://daserviceasync.localhost/" version="1.0">
+
+			<xs:element name="flightTicket" type="tns:flightTicket" />
+
+			<xs:complexType name="flightTicket">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="arg0" type="tns:flightData" />
+					<xs:element minOccurs="0" name="arg1" type="tns:travelClass" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:complexType name="flightData">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="desiredDepartureDate"
+						type="xs:dateTime" />
+					<xs:element minOccurs="0" name="desiredReturnDate" type="xs:dateTime" />
+					<xs:element minOccurs="0" name="destinationTo" type="xs:string" />
+					<xs:element minOccurs="0" name="originFrom" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:complexType name="travelClass">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="travelclasstype" type="tns:travelClassType" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:simpleType name="travelClassType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="ECONOMY" />
+					<xs:enumeration value="BUSINESS" />
+					<xs:enumeration value="FIRST" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="flightTicket">
+		<wsdl:part element="tns:flightTicket" name="parameters">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="DAServiceAsync">
+		<wsdl:operation name="flightTicket">
+			<wsdl:input message="tns:flightTicket" name="flightTicket">
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="DAServiceAsyncSoapBinding" type="tns:DAServiceAsync">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="flightTicket">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input name="flightTicket">
+				<soap:body use="literal" />
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="DAServiceAsync">
+		<wsdl:port binding="tns:DAServiceAsyncSoapBinding"
+			name="DAServiceAsyncPort">
+			<soap:address location="http://localhost:8080/ode/processes/DAServiceAsync" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

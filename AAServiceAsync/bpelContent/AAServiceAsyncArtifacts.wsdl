@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions xmlns:tns="http://aaserviceasync.localhost/" 
+	targetNamespace="http://aaserviceasync.localhost/Artifacts"	
+	xmlns="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:ai="http://aaservice.bpd.disim.univaq.it/"
+	xmlns:bt="http://businesstravel.bpd.disim.univaq.it/" >
+
+	<partnerLinkType name="AAServiceAsyncPLT"
+		xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+		<role name="AAServiceAsyncRole" portType="tns:AAServiceAsync" />
+		<role name="BusinessTravelRole" portType="bt:BusinessTravel" />
+	</partnerLinkType>
+
+	<partnerLinkType name="AAServicePLT"
+		xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+		<role name="AAServiceRole" portType="ai:AAInterface" />
+	</partnerLinkType>
+
+	<import location="aaserviceasync.wsdl" namespace="http://aaserviceasync.localhost/" />
+	<import location="businesstravel.wsdl" namespace="http://businesstravel.bpd.disim.univaq.it/" />
+	<import location="aainterface.wsdl" namespace="http://aaservice.bpd.disim.univaq.it/" />
+</definitions>

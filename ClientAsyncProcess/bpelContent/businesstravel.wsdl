@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="BusinessTravelService"
+  targetNamespace="http://businesstravel.bpd.disim.univaq.it/"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:tns="http://businesstravel.bpd.disim.univaq.it/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified"
+      targetNamespace="http://businesstravel.bpd.disim.univaq.it/"
+      version="1.0" xmlns:tns="http://businesstravel.bpd.disim.univaq.it/"
+      xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="Employee" type="tns:employee"/>
+
+  <xs:element name="FlightData" type="tns:flightData"/>
+  
+  <xs:element name="TravelApproval" type="tns:travelApproval"/>
+  
+  <xs:element name="TravelApprovalCallback" type="tns:flightTicketResponse"/>
+  
+  <xs:element name="FlightTicketCallback" type="tns:flightTicketResponse"/>
+
+  <xs:complexType name="travelApproval">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="employee" type="tns:employee"/>
+      <xs:element minOccurs="0" name="flightData" type="tns:flightData"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="employee">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="department" type="xs:string"/>
+      <xs:element minOccurs="0" name="firstName" type="xs:string"/>
+      <xs:element minOccurs="0" name="lastName" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="flightTicket">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:flightData"/>
+      <xs:element minOccurs="0" name="arg1" type="tns:travelClass"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="flightData">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="desiredDepartureDate" type="xs:dateTime"/>
+      <xs:element minOccurs="0" name="desiredReturnDate" type="xs:dateTime"/>
+      <xs:element minOccurs="0" name="destinationTo" type="xs:string"/>
+      <xs:element minOccurs="0" name="originFrom" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="travelClass">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="travelclasstype" type="tns:travelClassType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="flightTicketResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:flightConfirmation"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="flightConfirmation">
+    <xs:sequence>
+      <xs:element name="approved" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="departureDate" type="xs:dateTime"/>
+      <xs:element minOccurs="0" name="flightNo" type="xs:string"/>
+      <xs:element name="price" type="xs:float"/>
+      <xs:element minOccurs="0" name="returnDate" type="xs:dateTime"/>
+      <xs:element minOccurs="0" name="travelClass" type="tns:travelClass"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:simpleType name="travelClassType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ECONOMY"/>
+      <xs:enumeration value="BUSINESS"/>
+      <xs:enumeration value="FIRST"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="TravelApproval">
+    <wsdl:part name="parameters" element="tns:TravelApproval"/>
+  </wsdl:message>
+  <wsdl:message name="TravelApprovalCallback">
+    <wsdl:part element="tns:TravelApprovalCallback" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="FlightTicketCallback">
+    <wsdl:part element="tns:FlightTicketCallback" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="BusinessTravel">
+    <wsdl:operation name="TravelApproval">
+      <wsdl:input name="TravelApproval" message="tns:TravelApproval">
+    </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="TravelApprovalCallback">
+      <wsdl:input name="TravelApprovalCallback" message="tns:TravelApprovalCallback">
+    </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="FlightTicketCallback">
+      <wsdl:input name="FlightTicketCallback" message="tns:FlightTicketCallback">
+    </wsdl:input>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BusinessTravelServiceSoapBinding"
+  	type="tns:BusinessTravel">
+  	<soap:binding style="document"
+  		transport="http://schemas.xmlsoap.org/soap/http" />
+  	<wsdl:operation name="TravelApproval">
+  		<soap:operation
+  			soapAction="http://businesstravel.bpd.disim.univaq.it/TravelApproval" />
+  		<wsdl:input name="TravelApproval">
+  			<soap:body use="literal" />
+  		</wsdl:input>
+  	</wsdl:operation>
+  	<wsdl:operation name="TravelApprovalCallback">
+  		<soap:operation
+  			soapAction="http://businesstravel.bpd.disim.univaq.it/TravelApprovalCallback" />
+  		<wsdl:input name="TravelApprovalCallback">
+  			<soap:body use="literal" />
+  		</wsdl:input>
+  	</wsdl:operation>
+  	<wsdl:operation name="FlightTicketCallback">
+  		<soap:operation
+  			soapAction="http://businesstravel.bpd.disim.univaq.it/FlightTicketCallback" />
+  		<wsdl:input name="FlightTicketCallback">
+  			<soap:body use="literal" />
+  		</wsdl:input>
+  	</wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="BusinessTravelService">
+    <wsdl:port name="BusinessTravelPort" binding="tns:BusinessTravelServiceSoapBinding">
+      <soap:address location="http://localhost:8080/ode/processes/BusinessTravelService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

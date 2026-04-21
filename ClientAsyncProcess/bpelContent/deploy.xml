@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03" 
+        xmlns:clientasyncprocess.bpd.disim.univaq.it="http://clientasyncprocess.bpd.disim.univaq.it/"
+        xmlns:businesstravel.bpd.disim.univaq.it="http://businesstravel.bpd.disim.univaq.it/">
+  <process name="clientasyncprocess.bpd.disim.univaq.it:clientasyncprocess.bpel">
+    <active>true</active>
+    <retired>false</retired>
+    <process-events generate="all"/>
+
+    <provide partnerLink="clientRequest">
+      <service name="clientasyncprocess.bpd.disim.univaq.it:ClientAsyncProcess" port="ClientAsyncPort"/>
+    </provide>
+
+    <provide partnerLink="mainProcessRequest">
+      <service name="clientasyncprocess.bpd.disim.univaq.it:ClientAsyncProcess" port="ClientAsyncPort"/>
+    </provide>
+
+    <invoke partnerLink="mainProcessRequest">
+      <service name="businesstravel.bpd.disim.univaq.it:BusinessTravelService" port="BusinessTravelPort"/>
+    </invoke>
+
+  </process>
+</deploy>
